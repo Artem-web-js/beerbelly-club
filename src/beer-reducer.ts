@@ -1,3 +1,6 @@
+import {Dispatch} from "react";
+import {beerAPI} from "./api/beer-api";
+
 type BeerMaltType = {
     name: string
     amount: {
@@ -15,7 +18,7 @@ type BeerHopsType = {
     attribute: string
 }
 
-export type BeersItemsType = {
+export type BeerItemType = {
     id: number
     name: string
     tagline: string
@@ -66,25 +69,49 @@ export type BeersItemsType = {
     contributed_by: string
 }
 type IStateType = {
-    beers: Array<BeersItemsType>
+    beers: Array<BeerItemType>
     pageSize: number
     currentPage: number
+    loading: boolean
 }
 
 const IState: IStateType = {
-    beers: [] as Array<BeersItemsType>,
+    beers: [] as Array<BeerItemType>,
     pageSize: 5,
-    currentPage: 1
+    currentPage: 1,
+    loading: false,
 }
 
-export const beerReducer = (state = IState, action: any) => {
+export const beerReducer = (state = IState, action: ActionType) => {
     switch (action.type) {
-        case "xxx":
-            return state
-        case "yyy":
-            return state
+        case "SET_BEERS":
+            return {...state, beers: action.beers}
+        case "SET_LOADING":
+            return {...state, loading: action.loading}
+        // case "FIND_BEER":
+        //     return state.beers.find(i => i.id === action.id ? i : null)
         default:
-            throw new Error("Some things wrong!")
+            return state
     }
 }
 
+//actions
+export const setBeersAC = (beers: Array<BeerItemType>) => ({type: 'SET_BEERS', beers} as const)
+// export const findBeerAC = (id: number) => ({type: 'FIND_BEER', id} as const)
+export const loadingAC = (loading: boolean) => ({type: 'SET_LOADING', loading} as const)
+
+//thunks
+export const fetchBeersThunk = () => (dispatch: Dispatch<ActionType>) => {
+    dispatch(loadingAC(true))
+    return beerAPI.getBeer(1, 5)
+
+        .then((res) => {
+            dispatch(setBeersAC(res.data))
+            dispatch(loadingAC(false))
+        })
+}
+
+//ActionType
+type ActionType = ReturnType<typeof setBeersAC>
+| ReturnType<typeof loadingAC>
+// | ReturnType<typeof findBeerAC>
