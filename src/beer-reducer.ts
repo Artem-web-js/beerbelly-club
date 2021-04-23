@@ -73,6 +73,7 @@ type IStateType = {
     pageSize: number
     currentPage: number
     loading: boolean
+    currentBeer: BeerItemType
 }
 
 const IState: IStateType = {
@@ -80,6 +81,7 @@ const IState: IStateType = {
     pageSize: 5,
     currentPage: 1,
     loading: false,
+    currentBeer: {} as BeerItemType
 }
 
 export const beerReducer = (state = IState, action: ActionType) => {
@@ -88,8 +90,8 @@ export const beerReducer = (state = IState, action: ActionType) => {
             return {...state, beers: action.beers}
         case "SET_LOADING":
             return {...state, loading: action.loading}
-        // case "FIND_BEER":
-        //     return state.beers.find(i => i.id === action.id ? i : null)
+        case "CURRENT_BEER":
+            return {...state, currentBeer: action.currentBeer}
         default:
             return state
     }
@@ -97,16 +99,27 @@ export const beerReducer = (state = IState, action: ActionType) => {
 
 //actions
 export const setBeersAC = (beers: Array<BeerItemType>) => ({type: 'SET_BEERS', beers} as const)
-// export const findBeerAC = (id: number) => ({type: 'FIND_BEER', id} as const)
+export const findBeerAC = (currentBeer: BeerItemType) => {
+    debugger
+    return {type: 'CURRENT_BEER', currentBeer} as const
+}
 export const loadingAC = (loading: boolean) => ({type: 'SET_LOADING', loading} as const)
 
 //thunks
 export const fetchBeersThunk = () => (dispatch: Dispatch<ActionType>) => {
     dispatch(loadingAC(true))
-    return beerAPI.getBeer(1, 5)
-
+    return beerAPI.getBeers(1, 24)
         .then((res) => {
             dispatch(setBeersAC(res.data))
+            dispatch(loadingAC(false))
+        })
+}
+
+export const getBeerThunk = (beerId: number) => (dispatch: Dispatch<ActionType>) => {
+    dispatch(loadingAC(true))
+    return beerAPI.getBeer(beerId)
+        .then((res) => {
+            dispatch(findBeerAC(res.data[0]))
             dispatch(loadingAC(false))
         })
 }
@@ -114,4 +127,4 @@ export const fetchBeersThunk = () => (dispatch: Dispatch<ActionType>) => {
 //ActionType
 type ActionType = ReturnType<typeof setBeersAC>
 | ReturnType<typeof loadingAC>
-// | ReturnType<typeof findBeerAC>
+| ReturnType<typeof findBeerAC>

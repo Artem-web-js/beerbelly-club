@@ -6,14 +6,22 @@ import {IconButton, LinearProgress, Toolbar, Typography} from "@material-ui/core
 import MenuIcon from '@material-ui/icons/Menu';
 import {useSelector} from "react-redux";
 import {AppRootStateType} from "./store";
-import { Route, Switch } from 'react-router-dom';
-// import {BeerExtendedDescription} from "../BeerExtendedDescription";
-// import {BeerItemType} from "../beer-reducer";
+import {NavLink, Route, Switch } from 'react-router-dom';
+import { BeerExtendedDescription } from '../BeerExtendedDescription';
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+    navLink: {
+        textDecoration: "none",
+        color: "white"
+    }
+});
+
 
 function App() {
+    const classes = useStyles();
 
     let loading = useSelector<AppRootStateType, boolean>(state => state.beer.loading)
-    // const beers = useSelector<AppRootStateType, Array<BeerItemType>>(state => state.beer.beers)
 
     return (
         <div className="App">
@@ -23,14 +31,14 @@ function App() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6">
-                        BeerClub
+                        <NavLink to={"/"} className={classes.navLink}>BeerClub</NavLink>
                     </Typography>
                 </Toolbar>
                 {loading && <LinearProgress color="secondary"/>}
             </AppBar>
             <Switch>
-                <Route path={'/'} render={() => <BeersList/>}/>
-                {/*<Route path={'/beer_description/:id?'} render={() => <BeerExtendedDescription beers={beers}/>}/>*/}
+                <Route exact path={'/'} render={() => <BeersList/>}/>
+                <Route path={'/desc/:id?'} render={() => <BeerExtendedDescription />}/>
             </Switch>
         </div>
     );
