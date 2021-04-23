@@ -74,6 +74,8 @@ type IStateType = {
     currentPage: number
     loading: boolean
     currentBeer: BeerItemType
+    previousButton: boolean
+    nextButton: boolean
 }
 
 const IState: IStateType = {
@@ -81,17 +83,29 @@ const IState: IStateType = {
     pageSize: 5,
     currentPage: 1,
     loading: false,
-    currentBeer: {} as BeerItemType
+    currentBeer: {} as BeerItemType,
+    previousButton: true,
+    nextButton: false
 }
 
 export const beerReducer = (state = IState, action: ActionType) => {
     switch (action.type) {
         case "SET_BEERS":
-            return {...state, beers: action.beers}
+            if(action.beers.length < 15) {
+                return {...state, beers: action.beers, nextButton: true}
+            } else {
+                return {...state, beers: action.beers, nextButton: false}
+            }
+            // return {...state, }
         case "SET_LOADING":
             return {...state, loading: action.loading}
         case "CURRENT_BEER":
             return {...state, currentBeer: action.currentBeer}
+        case "INCREMENT":
+            return {...state, currentPage: action.page + 1, previousButton: false}
+        case "DECREMENT":
+            if(action.page === 2) return {...state, currentPage: 1, previousButton: true}
+            return {...state, currentPage: action.page - 1}
         default:
             return state
     }
@@ -99,17 +113,17 @@ export const beerReducer = (state = IState, action: ActionType) => {
 
 //actions
 export const setBeersAC = (beers: Array<BeerItemType>) => ({type: 'SET_BEERS', beers} as const)
-export const findBeerAC = (currentBeer: BeerItemType) => {
-    debugger
-    return {type: 'CURRENT_BEER', currentBeer} as const
-}
+export const findBeerAC = (currentBeer: BeerItemType) => ({type: 'CURRENT_BEER', currentBeer} as const)
 export const loadingAC = (loading: boolean) => ({type: 'SET_LOADING', loading} as const)
+export const incrementPageAC = (page: number) => ({type: 'INCREMENT', page} as const)
+export const decrementPageAC = (page: number) => ({type: 'DECREMENT', page} as const)
 
 //thunks
-export const fetchBeersThunk = () => (dispatch: Dispatch<ActionType>) => {
+export const fetchBeersThunk = (page: number) => (dispatch: Dispatch<ActionType>) => {
     dispatch(loadingAC(true))
-    return beerAPI.getBeers(1, 24)
+    return beerAPI.getBeers(page, 15)
         .then((res) => {
+            debugger
             dispatch(setBeersAC(res.data))
             dispatch(loadingAC(false))
         })
@@ -126,5 +140,7 @@ export const getBeerThunk = (beerId: number) => (dispatch: Dispatch<ActionType>)
 
 //ActionType
 type ActionType = ReturnType<typeof setBeersAC>
-| ReturnType<typeof loadingAC>
-| ReturnType<typeof findBeerAC>
+    | ReturnType<typeof loadingAC>
+    | ReturnType<typeof findBeerAC>
+    | ReturnType<typeof incrementPageAC>
+    | ReturnType<typeof decrementPageAC>
