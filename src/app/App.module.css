@@ -1,0 +1,15 @@
+.App {}
+.tabsWrapper {
+    display: flex;
+    justify-content: center;
+}
+.navLink {
+    text-decoration: none;
+    color: white;
+}
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+}

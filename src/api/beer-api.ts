@@ -5,8 +5,12 @@ const instance = axios.create({
 })
 
 export const beerAPI = {
-    getBeers(currentPage: number, pageSize: number) {
-        return instance.get(`beers?page=${currentPage}&per_page=${pageSize}`)
+    getBeers(foodName: string | null, currentPage: number, pageSize: number) {
+        if(foodName !== null) {
+            return instance.get(`beers?food=${foodName}&page=${currentPage}&per_page=${pageSize}`)
+        } else {
+            return instance.get(`beers?page=${currentPage}&per_page=${pageSize}`)
+        }
     },
     getBeer(id: number) {
         return instance.get(`beers/${id}`)

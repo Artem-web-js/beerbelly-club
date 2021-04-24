@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers } from "redux";
 import { createStore } from "redux";
 import thunk from "redux-thunk";
-import {beerReducer} from "../beer-reducer";
+import {beerReducer} from "../features/BeersList/beer-reducer";
 
 const rootReducer = combineReducers({
     beer: beerReducer,

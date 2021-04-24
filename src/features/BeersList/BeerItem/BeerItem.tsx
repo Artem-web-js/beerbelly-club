@@ -1,35 +1,24 @@
 import React from "react";
-import {BeerItemType} from "./beer-reducer";
-import { makeStyles } from '@material-ui/core/styles'
+import {BeerItemType, hideTabsAndPaginationAC} from "../beer-reducer";
 import {Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
-
-const useStyles = makeStyles({
-    root: {
-        maxWidth: 345,
-        margin: 10
-    },
-    media: {
-        width: 50,
-        margin: 10
-    },
-    actionArea: {
-        display: "flex"
-    },
-    navLink: {
-        textDecoration: "none"
-    }
-});
+import styles from "./BeerItem.module.css";
+import {useDispatch} from "react-redux";
 
 export const BeerItem = (props: {item: BeerItemType }) => {
-    const classes = useStyles();
+
+    const dispatch = useDispatch()
+
+    const hideTabsHandler = () => {
+        dispatch(hideTabsAndPaginationAC(true))
+    }
 
     return (
-        <Card className={classes.root}>
-            <Box className={classes.actionArea}>
+        <Card className={styles.wrapper}>
+            <Box className={styles.actionArea}>
                 <CardMedia
                     component="img"
-                    className={classes.media}
+                    className={styles.image}
                     alt={props.item.name}
                     image={props.item.image_url}
                     title={props.item.name}
@@ -44,8 +33,8 @@ export const BeerItem = (props: {item: BeerItemType }) => {
                 </CardContent>
             </Box>
             <CardActions>
-                <Button size="small" color="primary" variant="outlined">
-                    <NavLink to={`/desc/${props.item.id}`} className={classes.navLink}>Learn More</NavLink>
+                <Button size="small" color="primary" variant="outlined" onClick={hideTabsHandler}>
+                    <NavLink to={`/desc/${props.item.id}`} className={styles.navLink}>Learn More</NavLink>
                 </Button>
             </CardActions>
         </Card>
