@@ -16,3 +16,6 @@
 .navLink {
     text-decoration: none;
 }
+.navLink:visited {
+    color: #3f51b5;
+}

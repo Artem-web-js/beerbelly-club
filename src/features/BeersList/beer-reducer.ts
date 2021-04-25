@@ -95,10 +95,22 @@ const IState: IStateType = {
 export const beerReducer = (state = IState, action: ActionType) => {
     switch (action.type) {
         case "SET_BEERS":
-            if(action.beers.length < 15) {
-                return {...state, beers: action.beers, foodName: action.foodName, currentPage: action.page ,nextButton: true}
+            if (action.beers.length < 15) {
+                return {
+                    ...state,
+                    beers: action.beers,
+                    foodName: action.foodName,
+                    currentPage: action.page,
+                    nextButton: true
+                }
             } else {
-                return {...state, beers: action.beers, nextButton: false}
+                return {
+                    ...state,
+                    beers: action.beers,
+                    foodName: action.foodName,
+                    currentPage: action.page,
+                    nextButton: false
+                }
             }
         case "SET_LOADING":
             return {...state, loading: action.loading}
@@ -107,22 +119,30 @@ export const beerReducer = (state = IState, action: ActionType) => {
         case "INCREMENT":
             return {...state, currentPage: action.page + 1, previousButton: false}
         case "DECREMENT":
-            if(action.page === 2) return {...state, currentPage: 1, previousButton: true}
+            if (action.page === 2) return {...state, currentPage: 1, previousButton: true}
             return {...state, currentPage: action.page - 1}
         case "HIDE_TABS_AND_PAGINATION":
             return {...state, hideTabsAndPagination: action.value}
+        case "DISABLE_BUTTON":
+            return {...state, previousButton: action.value}
         default:
             return state
     }
 }
 
 //actions
-export const setBeersAC = (beers: Array<BeerItemType>, foodName: string | null, page: number) => ({type: 'SET_BEERS', beers, foodName, page} as const)
+export const setBeersAC = (beers: Array<BeerItemType>, foodName: string | null, page: number) => ({
+    type: 'SET_BEERS',
+    beers,
+    foodName,
+    page
+} as const)
 export const findBeerAC = (currentBeer: BeerItemType) => ({type: 'CURRENT_BEER', currentBeer} as const)
 export const loadingAC = (loading: boolean) => ({type: 'SET_LOADING', loading} as const)
 export const incrementPageAC = (page: number) => ({type: 'INCREMENT', page} as const)
 export const decrementPageAC = (page: number) => ({type: 'DECREMENT', page} as const)
 export const hideTabsAndPaginationAC = (value: boolean) => ({type: 'HIDE_TABS_AND_PAGINATION', value} as const)
+export const disableButton = (value: boolean) => ({type: 'DISABLE_BUTTON', value} as const)
 
 //thunks
 export const fetchBeersThunk = (page: number, foodName: string | null) => (dispatch: Dispatch<ActionType>) => {
@@ -150,3 +170,4 @@ type ActionType = ReturnType<typeof setBeersAC>
     | ReturnType<typeof incrementPageAC>
     | ReturnType<typeof decrementPageAC>
     | ReturnType<typeof hideTabsAndPaginationAC>
+    | ReturnType<typeof disableButton>

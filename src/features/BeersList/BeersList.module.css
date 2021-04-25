@@ -1,12 +1,12 @@
 .wrapper {
     display: flex;
+    justify-content: center;
 }
 .block {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     width: max-content;
-    margin: 0 auto;
 }
 .pageNumber {
     margin: 0 10px;

@@ -1,11 +1,11 @@
 import React from "react";
 import {BeerItemType, hideTabsAndPaginationAC} from "../beer-reducer";
-import {Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@material-ui/core";
-import { NavLink } from "react-router-dom";
+import {Box, Button, Card, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core";
+import {NavLink} from "react-router-dom";
 import styles from "./BeerItem.module.css";
 import {useDispatch} from "react-redux";
 
-export const BeerItem = (props: {item: BeerItemType }) => {
+export const BeerItem = (props: { item: BeerItemType }) => {
 
     const dispatch = useDispatch()
 
@@ -23,7 +23,7 @@ export const BeerItem = (props: {item: BeerItemType }) => {
                     image={props.item.image_url}
                     title={props.item.name}
                 />
-                <CardContent >
+                <CardContent>
                     <Typography variant="h5" component="h2">
                         {props.item.name}
                     </Typography>
@@ -33,9 +33,11 @@ export const BeerItem = (props: {item: BeerItemType }) => {
                 </CardContent>
             </Box>
             <CardActions>
-                <Button size="small" color="primary" variant="outlined" onClick={hideTabsHandler}>
-                    <NavLink to={`/desc/${props.item.id}`} className={styles.navLink}>Learn More</NavLink>
-                </Button>
+                <NavLink to={`/desc/${props.item.id}`} className={styles.navLink}>
+                    <Button size="small" color="primary" variant="outlined" onClick={hideTabsHandler}>
+                        Learn More
+                    </Button>
+                </NavLink>
             </CardActions>
         </Card>
     );

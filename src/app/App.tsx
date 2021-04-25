@@ -2,17 +2,17 @@ import AppBar from '@material-ui/core/AppBar';
 import React from 'react';
 import {BeersList} from '../features/BeersList/BeersList';
 import styles from './App.module.css';
-import {Button, IconButton, LinearProgress, Paper, Tab, Tabs, Toolbar, Typography} from "@material-ui/core";
-import MenuIcon from '@material-ui/icons/Menu';
+import {Button, LinearProgress, Paper, Tab, Tabs, Toolbar, Typography} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./store";
 import {NavLink, Route, Switch} from 'react-router-dom';
 import {BeerExtendedDescription} from '../features/BeersList/BeerExtendedDescription/BeerExtendedDescription';
 import {
-    decrementPageAC,
+    decrementPageAC, disableButton,
     fetchBeersThunk, hideTabsAndPaginationAC,
     incrementPageAC
 } from '../features/BeersList/beer-reducer';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 function App() {
 
@@ -21,15 +21,8 @@ function App() {
     const prevDisabled = useSelector<AppRootStateType, boolean>(state => state.beer.previousButton)
     const nextDisabled = useSelector<AppRootStateType, boolean>(state => state.beer.nextButton)
     const hideTabsAndPagination = useSelector<AppRootStateType, boolean>(state => state.beer.hideTabsAndPagination)
-    // const currentFood = useSelector<AppRootStateType, string | null>(state => state.beer.foodName)
 
     const dispatch = useDispatch()
-
-    // let [editMode, setEditMode] = useState(false)
-
-    // const onChangePage = (e: ChangeEvent<HTMLInputElement>) => {
-    //     dispatch(incrementPageAC(+e.currentTarget.value))
-    // }
 
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -38,6 +31,7 @@ function App() {
 
     const chooseBear = (foodName: string | null) => {
         dispatch(fetchBeersThunk(1, foodName))
+        dispatch(disableButton(true))
     }
 
     const nextPage = () => {
@@ -48,18 +42,10 @@ function App() {
         dispatch(decrementPageAC(currentPage))
     }
 
-    // const backToMain = () => {
-    //     dispatch(hideTabsAndPaginationAC(false))
-    //     dispatch(fetchBeersThunk(currentPage, currentFood))
-    // }
-
     return (
         <div className={styles.App}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                        <MenuIcon/>
-                    </IconButton>
                     <Typography variant="h6" onClick={() => dispatch(hideTabsAndPaginationAC(false))}>
                         <NavLink to={"/"} className={styles.navLink}>BeerClub</NavLink>
                     </Typography>
@@ -87,20 +73,21 @@ function App() {
                                     disabled={prevDisabled}>Previous</Button>
                             <Typography variant="h5"
                                         className={styles.pageNumber}>
-                                {/*{editMode
-                    ? <input onChange={onChangePage}
-                             onBlur={() => setEditMode(false)}
-                             value={currentPage}
-                             type={"number"}
-                        />
-                    : {currentPage}}*/}
                                 {currentPage}
                             </Typography>
-                            <Button onClick={nextPage} color="primary" variant="text" disabled={nextDisabled}>Next</Button>
+                            <Button onClick={nextPage}
+                                    color="primary"
+                                    variant="text"
+                                    disabled={nextDisabled}>Next</Button>
                         </div>
                     </>
-                    : <Paper square className={styles.tabsWrapper}>
-                        <Button size="large" onClick={() => dispatch(hideTabsAndPaginationAC(false))}>back</Button>
+                    : <Paper square className={styles.backButtonWrapper}>
+                        <NavLink to={"/"} className={styles.backNavLink}>
+                            <Button size="large"
+                                    color={"primary"}
+                                    onClick={() => dispatch(hideTabsAndPaginationAC(false))}
+                                    startIcon={<ChevronLeftIcon/>}>Back</Button>
+                        </NavLink>
                     </Paper>
             }
 
