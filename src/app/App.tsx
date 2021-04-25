@@ -52,6 +52,7 @@ function App() {
                 </Toolbar>
                 {loading && <LinearProgress color="secondary"/>}
             </AppBar>
+
             {
                 !hideTabsAndPagination
                     ? <>

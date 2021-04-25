@@ -10,5 +10,15 @@
 }
 .pageNumber {
     margin: 0 10px;
+}
 
+.filtersWrapper {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+}
+
+h4 {
+    margin-bottom: 20px !important;
 }
