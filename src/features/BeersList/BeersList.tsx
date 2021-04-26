@@ -1,10 +1,18 @@
 import {useDispatch, useSelector} from "react-redux"
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {BeerItemType, fetchBeersThunk} from "./beer-reducer";
 import {AppRootStateType} from "../../app/store";
 import {BeerItem} from "./BeerItem/BeerItem";
 import styles from "./BeersList.module.css"
-import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Typography} from "@material-ui/core";
+import {
+    Button,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    FormLabel,
+    Typography
+} from "@material-ui/core";
+import {Radio} from "@material-ui/core";
 
 export const BeersList = () => {
 
@@ -14,6 +22,7 @@ export const BeersList = () => {
     const foodName = useSelector<AppRootStateType, string | null>(state => state.beer.foodName)
 
     useEffect(() => {
+        debugger
         dispatch(fetchBeersThunk(currentPage, foodName))
     }, [dispatch, currentPage, foodName])
 
@@ -21,49 +30,47 @@ export const BeersList = () => {
     //     return console.log(beers.sort((a, b) => a.abv > b.abv ? 1 : -1))
     // }
 
-    const [state, setState] = React.useState({
-        jason: false,
-        antoine: false,
-    });
+    let [value, setValue] = useState('')
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setState({ ...state, [event.target.name]: event.target.checked });
+    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue((event.target as HTMLInputElement).value);
     };
 
-    const { jason, antoine } = state;
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        if (value === 'strong') {
+            console.log('Add strong Alcohol')
+        } else if (value === 'light') {
+            console.log('Add light Alcohol')
+        } else if (value === "az"){
+            console.log('Alcohol A - Z')
+        } else {
+            console.log("Alcohol Z - A")
+        }
+    }
 
     return (
         <>
             <div className={styles.wrapper}>
                 <div className={styles.filtersWrapper}>
                     <Typography variant={"h4"}>Filters</Typography>
-                    <FormControl component="fieldset" className={styles.formControl}>
-                        <FormLabel component="legend">Alcohol by Volume</FormLabel>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={jason} onChange={handleChange} name="jason" />}
-                                label="from less to more"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={antoine} onChange={handleChange} name="antoine" />}
-                                label="from more to less"
-                            />
-                        </FormGroup>
-                    </FormControl>
-                    <FormControl component="fieldset" className={styles.formControl}>
-                        <FormLabel component="legend">Sort by Name</FormLabel>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={jason} onChange={handleChange} name="jason" />}
-                                label="A - Z"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={antoine} onChange={handleChange} name="antoine" />}
-                                label="Z - A"
-                            />
-                        </FormGroup>
-                    </FormControl>
-                    <Button color={"secondary"} variant={"outlined"}>Set filters</Button>
+                    <form onSubmit={handleSubmit}>
+                        <FormControl component="fieldset" className={styles.formControl}>
+                            <RadioGroup name="filter" onChange={handleRadioChange}>
+
+                                <FormLabel component="legend">Alcohol by Volume</FormLabel>
+                                <FormControlLabel value="strong" control={<Radio/>} label="Strong First"/>
+                                <FormControlLabel value="light" control={<Radio/>} label="Light First"/>
+
+                                <FormLabel component="legend">Alcohol by Name</FormLabel>
+                                <FormControlLabel value="az" control={<Radio/>} label="A - Z"/>
+                                <FormControlLabel value="za" control={<Radio/>} label="Z - A"/>
+
+                            </RadioGroup>
+                            <Button type={"submit"} color={"secondary"} variant={"outlined"}>Set filters</Button>
+                        </FormControl>
+                    </form>
                 </div>
                 <div className={styles.block}>
                     {beers.map(i => <div key={i.id}>

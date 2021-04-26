@@ -4,6 +4,7 @@ import {Box, Button, Card, CardActions, CardContent, CardMedia, Typography} from
 import {NavLink} from "react-router-dom";
 import styles from "./BeerItem.module.css";
 import {useDispatch} from "react-redux";
+import noImagePhoto from "../../../assets/unnamed.png"
 
 export const BeerItem = (props: { item: BeerItemType }) => {
 
@@ -20,7 +21,7 @@ export const BeerItem = (props: { item: BeerItemType }) => {
                     component="img"
                     className={styles.image}
                     alt={props.item.name}
-                    image={props.item.image_url}
+                    image={props.item.image_url ? props.item.image_url : noImagePhoto}
                     title={props.item.name}
                 />
                 <CardContent>

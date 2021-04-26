@@ -123,8 +123,12 @@ export const beerReducer = (state = IState, action: ActionType) => {
             return {...state, currentPage: action.page - 1}
         case "HIDE_TABS_AND_PAGINATION":
             return {...state, hideTabsAndPagination: action.value}
-        case "DISABLE_BUTTON":
+        case "DISABLE_PREV_BUTTON":
+            if (state.currentPage === 1) return {...state, currentPage: 1, previousButton: true}
             return {...state, previousButton: action.value}
+        case "DISABLE_NEXT_BUTTON":
+            if (state.beers.length < 15) return {...state, nextButton: true}
+            return {...state, nextButton: action.value}
         default:
             return state
     }
@@ -142,7 +146,8 @@ export const loadingAC = (loading: boolean) => ({type: 'SET_LOADING', loading} a
 export const incrementPageAC = (page: number) => ({type: 'INCREMENT', page} as const)
 export const decrementPageAC = (page: number) => ({type: 'DECREMENT', page} as const)
 export const hideTabsAndPaginationAC = (value: boolean) => ({type: 'HIDE_TABS_AND_PAGINATION', value} as const)
-export const disableButton = (value: boolean) => ({type: 'DISABLE_BUTTON', value} as const)
+export const disableNextButton = (value: boolean) => ({type: 'DISABLE_NEXT_BUTTON', value} as const)
+export const disablePrevButton = (value: boolean) => ({type: 'DISABLE_PREV_BUTTON', value} as const)
 
 //thunks
 export const fetchBeersThunk = (page: number, foodName: string | null) => (dispatch: Dispatch<ActionType>) => {
@@ -150,6 +155,8 @@ export const fetchBeersThunk = (page: number, foodName: string | null) => (dispa
     return beerAPI.getBeers(foodName, page, 15)
         .then((res) => {
             dispatch(setBeersAC(res.data, foodName, page))
+            dispatch(disableNextButton(false))
+            dispatch(disablePrevButton(false))
             dispatch(loadingAC(false))
         })
 }
@@ -170,4 +177,5 @@ type ActionType = ReturnType<typeof setBeersAC>
     | ReturnType<typeof incrementPageAC>
     | ReturnType<typeof decrementPageAC>
     | ReturnType<typeof hideTabsAndPaginationAC>
-    | ReturnType<typeof disableButton>
+    | ReturnType<typeof disablePrevButton>
+    | ReturnType<typeof disableNextButton>

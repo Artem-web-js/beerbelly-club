@@ -13,7 +13,7 @@
 }
 
 .filtersWrapper {
-    width: 40%;
+    min-width: 180px;
     display: flex;
     flex-direction: column;
     margin-left: 15px;

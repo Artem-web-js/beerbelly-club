@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../app/store";
 import styles from "./BeerExtendedDescription.module.css";
+import noImagePhoto from "../../../assets/unnamed.png";
 
 export const BeerExtendedDescription = () => {
     const item = useSelector<AppRootStateType, BeerItemType>(state => state.beer.currentBeer)
@@ -24,7 +25,7 @@ export const BeerExtendedDescription = () => {
                         component="img"
                         className={styles.image}
                         alt={item.name}
-                        image={item.image_url}
+                        image={item.image_url ? item.image_url : noImagePhoto}
                         title={item.name}
                     />
                     <CardContent>

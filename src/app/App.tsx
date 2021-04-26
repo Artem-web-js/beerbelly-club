@@ -8,7 +8,7 @@ import {AppRootStateType} from "./store";
 import {NavLink, Route, Switch} from 'react-router-dom';
 import {BeerExtendedDescription} from '../features/BeersList/BeerExtendedDescription/BeerExtendedDescription';
 import {
-    decrementPageAC, disableButton,
+    decrementPageAC, disableNextButton, disablePrevButton,
     fetchBeersThunk, hideTabsAndPaginationAC,
     incrementPageAC
 } from '../features/BeersList/beer-reducer';
@@ -31,15 +31,17 @@ function App() {
 
     const chooseBear = (foodName: string | null) => {
         dispatch(fetchBeersThunk(1, foodName))
-        dispatch(disableButton(true))
+        dispatch(disablePrevButton(true))
     }
 
     const nextPage = () => {
         dispatch(incrementPageAC(currentPage))
+        dispatch(disableNextButton(true))
     }
 
     const previousPage = () => {
         dispatch(decrementPageAC(currentPage))
+        dispatch(disablePrevButton(true))
     }
 
     return (
