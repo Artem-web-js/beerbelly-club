@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from "react-redux"
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {BeerItemType, BeersFilterType, fetchBeersThunk, sortBeersByValue} from "./beer-reducer";
 import {AppRootStateType} from "../../app/store";
 import {BeerItem} from "./BeerItem/BeerItem";
@@ -13,6 +13,11 @@ import {
     Typography
 } from "@material-ui/core";
 import {Radio} from "@material-ui/core";
+import { useFormik } from "formik";
+
+// interface MyFormValues {
+//     filter: BeersFilterType
+// }
 
 export const BeersList = () => {
 
@@ -26,17 +31,6 @@ export const BeersList = () => {
         dispatch(fetchBeersThunk(currentPage, foodName))
     }, [dispatch, currentPage, foodName])
 
-    let [value, setValue] = useState<BeersFilterType>(sortValue)
-
-    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value as BeersFilterType)
-    };
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        dispatch(sortBeersByValue(value))
-    }
-
     let beersList = beers
 
     if (sortValue === "strong") {
@@ -49,16 +43,28 @@ export const BeersList = () => {
         beersList.sort((a, b) => a.name < b.name ? 1 : -1)
     }
 
+    // const initialValues: MyFormValues = { filter: 'no filters'};
+
+    const formik = useFormik({
+        initialValues: {
+            filter: 'no filters'
+        },
+        onSubmit: values => {
+            //@ts-ignore
+            dispatch(sortBeersByValue(values.filter))
+        },
+    });
+
     return (
         <>
             <div className={styles.wrapper}>
                 <div className={styles.filtersWrapper}>
                     <Typography variant={"h4"}>Filters</Typography>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={formik.handleSubmit}>
                         <FormControl component="fieldset" className={styles.formControl}>
-                            <RadioGroup name="filter" value={value} onChange={handleRadioChange}>
+                            <RadioGroup name="filter" value={formik.values.filter} onChange={formik.handleChange}>
 
-                                <FormControlLabel value="no filters" control={<Radio/>} label="No filters"/>
+                                <FormControlLabel value="no filters" control={<Radio />} label="No filters"/>
                                 <FormLabel component="legend">Alcohol by Volume</FormLabel>
                                 <FormControlLabel value="strong" control={<Radio/>} label="Strong First"/>
                                 <FormControlLabel value="light" control={<Radio/>} label="Light First"/>
