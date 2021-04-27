@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux"
 import React, {useEffect, useState} from "react";
-import {BeerItemType, fetchBeersThunk} from "./beer-reducer";
+import {BeerItemType, BeersFilterType, fetchBeersThunk, sortBeersByValue} from "./beer-reducer";
 import {AppRootStateType} from "../../app/store";
 import {BeerItem} from "./BeerItem/BeerItem";
 import styles from "./BeersList.module.css"
@@ -20,34 +20,33 @@ export const BeersList = () => {
     const beers = useSelector<AppRootStateType, Array<BeerItemType>>(state => state.beer.beers)
     const currentPage = useSelector<AppRootStateType, number>(state => state.beer.currentPage)
     const foodName = useSelector<AppRootStateType, string | null>(state => state.beer.foodName)
+    const sortValue = useSelector<AppRootStateType, BeersFilterType>(state => state.beer.sortBeers)
 
     useEffect(() => {
-        debugger
         dispatch(fetchBeersThunk(currentPage, foodName))
     }, [dispatch, currentPage, foodName])
 
-    // let sortBeers = () => {
-    //     return console.log(beers.sort((a, b) => a.abv > b.abv ? 1 : -1))
-    // }
-
-    let [value, setValue] = useState('')
+    let [value, setValue] = useState<BeersFilterType>(sortValue)
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value);
+        setValue((event.target as HTMLInputElement).value as BeersFilterType)
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        dispatch(sortBeersByValue(value))
+    }
 
-        if (value === 'strong') {
-            console.log('Add strong Alcohol')
-        } else if (value === 'light') {
-            console.log('Add light Alcohol')
-        } else if (value === "az"){
-            console.log('Alcohol A - Z')
-        } else {
-            console.log("Alcohol Z - A")
-        }
+    let beersList = beers
+
+    if (sortValue === "strong") {
+        beersList.sort((a, b) => a.abv < b.abv ? 1 : -1)
+    } else if (sortValue === "light") {
+        beersList.sort((a, b) => a.abv > b.abv ? 1 : -1)
+    } else if (sortValue === "az") {
+        beersList.sort((a, b) => a.name > b.name ? 1 : -1)
+    } else if (sortValue === "za") {
+        beersList.sort((a, b) => a.name < b.name ? 1 : -1)
     }
 
     return (
@@ -57,8 +56,9 @@ export const BeersList = () => {
                     <Typography variant={"h4"}>Filters</Typography>
                     <form onSubmit={handleSubmit}>
                         <FormControl component="fieldset" className={styles.formControl}>
-                            <RadioGroup name="filter" onChange={handleRadioChange}>
+                            <RadioGroup name="filter" value={value} onChange={handleRadioChange}>
 
+                                <FormControlLabel value="no filters" control={<Radio/>} label="No filters"/>
                                 <FormLabel component="legend">Alcohol by Volume</FormLabel>
                                 <FormControlLabel value="strong" control={<Radio/>} label="Strong First"/>
                                 <FormControlLabel value="light" control={<Radio/>} label="Light First"/>
@@ -73,7 +73,7 @@ export const BeersList = () => {
                     </form>
                 </div>
                 <div className={styles.block}>
-                    {beers.map(i => <div key={i.id}>
+                    {beersList.map(i => <div key={i.id}>
                         <BeerItem item={i}/>
                     </div>)}
                 </div>

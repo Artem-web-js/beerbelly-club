@@ -18,6 +18,8 @@ type BeerHopsType = {
     attribute: string
 }
 
+export type BeersFilterType = "strong" | "light" | "az" | "za" | "no filters"
+
 export type BeerItemType = {
     id: number
     name: string
@@ -78,6 +80,7 @@ type IStateType = {
     nextButton: boolean
     foodName: string | null
     hideTabsAndPagination: boolean
+    sortBeers: BeersFilterType
 }
 
 const IState: IStateType = {
@@ -89,7 +92,8 @@ const IState: IStateType = {
     previousButton: true,
     nextButton: false,
     foodName: null,
-    hideTabsAndPagination: false
+    hideTabsAndPagination: false,
+    sortBeers: "no filters"
 }
 
 export const beerReducer = (state = IState, action: ActionType) => {
@@ -129,6 +133,8 @@ export const beerReducer = (state = IState, action: ActionType) => {
         case "DISABLE_NEXT_BUTTON":
             if (state.beers.length < 15) return {...state, nextButton: true}
             return {...state, nextButton: action.value}
+        case "SORT_BEERS_BY_VALUE":
+            return {...state, sortBeers: action.filter}
         default:
             return state
     }
@@ -148,6 +154,7 @@ export const decrementPageAC = (page: number) => ({type: 'DECREMENT', page} as c
 export const hideTabsAndPaginationAC = (value: boolean) => ({type: 'HIDE_TABS_AND_PAGINATION', value} as const)
 export const disableNextButton = (value: boolean) => ({type: 'DISABLE_NEXT_BUTTON', value} as const)
 export const disablePrevButton = (value: boolean) => ({type: 'DISABLE_PREV_BUTTON', value} as const)
+export const sortBeersByValue = (filter: BeersFilterType) => ({type: 'SORT_BEERS_BY_VALUE', filter} as const)
 
 //thunks
 export const fetchBeersThunk = (page: number, foodName: string | null) => (dispatch: Dispatch<ActionType>) => {
@@ -179,3 +186,4 @@ type ActionType = ReturnType<typeof setBeersAC>
     | ReturnType<typeof hideTabsAndPaginationAC>
     | ReturnType<typeof disablePrevButton>
     | ReturnType<typeof disableNextButton>
+    | ReturnType<typeof sortBeersByValue>
