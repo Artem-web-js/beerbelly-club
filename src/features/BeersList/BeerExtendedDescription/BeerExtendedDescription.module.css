@@ -3,15 +3,27 @@
     justify-content: center;
     align-items: center;
 }
+
 .root {
     max-width: 600px;
     margin: 10px;
 }
+
 .image {
     width: 100px !important;
     margin: 10px;
     align-self: flex-start;
 }
+
 .actionArea {
     display: flex;
+}
+
+.backButtonWrapper {
+    padding: 5px;
+}
+
+.backNavLink {
+    text-decoration: none;
+    color: white;
 }
