@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./store";
 import {NavLink, Route, Switch} from 'react-router-dom';
 import {BeerExtendedDescription} from '../features/BeersList/BeerExtendedDescription/BeerExtendedDescription';
-import {hideTabsAndPaginationAC,} from '../features/BeersList/beer-reducer';
+import {hideTabsAndPaginationAC} from '../features/BeersList/beer-reducer';
 
 function App() {
 
